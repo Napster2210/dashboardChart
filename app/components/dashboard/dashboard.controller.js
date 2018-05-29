@@ -13,6 +13,7 @@
    */
   function DashboardController($scope, DashbaordService) {
 
+    $scope.initialData = [];
     $scope.data = [];
     $scope.dataSource = [];
     $scope.isFirstLevel = true;
@@ -24,7 +25,8 @@
     function activate() {
       DashbaordService.fetchInitialData().then(
         function (data) {
-          generateChartData(data);
+          $scope.initialData = data;
+          generateChartData();
         },
         function (error) {
           console.error('Error while fetching data!');
@@ -36,30 +38,62 @@
      * 
      * @param {any} data Data from backend
      */
-    function generateChartData(data) {
-      var totalGatePass = 0, totalCancelPass = 0, totalRenewalPass = 0, totalNewPass = 0;
-      var totalStatus = _.map(data, function (obj) {
-        return obj.GatepassRenwalCancelStatus.split(/(?=[A-Z])/);
-      });
-      totalGatePass = totalStatus.length;
-      _.map(totalStatus, function (obj, index) {
-        if (obj[0] === 'Renewal') {
-          totalRenewalPass++;
-        } else if (obj[0] === 'New') {
-          totalNewPass++;
-        } else if (obj[0] === 'Cancel') {
-          totalCancelPass++;
+    function generateChartData() {
+      var tempResult = {
+        "Total": $scope.initialData.length,
+        "Cancel": {
+          "Approved": 0,
+          "Pending": 0,
+          "Total": 0
+        },
+        "Renewal": {
+          "Approoved": 0,
+          "Pending": 0,
+          "Total": 0
+        },
+        "New": {
+          "Approved": 0,
+          "Pending": 0,
+          "Total": 0
+        }
+      };
+      var totalStatus = _.map($scope.initialData, function (obj) {
+        switch (obj.GatepassRenwalCancelStatus) {
+          case 'RenewalApproved':
+            tempResult.Renewal.Total++
+            tempResult.Renewal.Approoved++;
+            break;
+          case 'RenewalPending':
+            tempResult.Renewal.Total++;
+            tempResult.Renewal.Pending++;
+            break;
+          case 'CancelApproved':
+            tempResult.Cancel.Total++;
+            tempResult.Cancel.Approved++;
+            break;
+          case 'CancelPending':
+            tempResult.Cancel.Total++;
+            tempResult.Cancel.Pending++;
+            break;
+          case 'NewApproved':
+            tempResult.New.Total++;
+            tempResult.New.Approved++;
+            break;
+          case 'NewPending':
+            tempResult.New.Total++;
+            tempResult.New.Pending++;
+            break;
+          default:
+            break;
         }
       });
-
       $scope.data = [
         {
           key: "Total",
           values: [
             {
               title: "Total",
-              val: totalGatePass,
-              parentID: "",
+              val: tempResult.Total,
               color: "#E6EE9C"
             }
           ]
@@ -69,10 +103,21 @@
           values: [
             {
               title: "Cancel",
-              val: totalCancelPass,
-              parentID: "",
+              val: tempResult.Cancel.Total,
               color: "#90CAF9"
-            }
+            },
+            {
+              title: "Pending",
+              val: tempResult.Cancel.Pending,
+              color: "#90CAF9",
+              parentID: "Cancel"
+            },
+            {
+              title: "Approved",
+              val: tempResult.Cancel.Approved,
+              color: "#90CAF9",
+              parentID: "Cancel"
+            },
           ]
         },
         {
@@ -80,9 +125,20 @@
           values: [
             {
               title: "Renewal",
-              val: totalRenewalPass,
-              parentID: "",
+              val: tempResult.Renewal.Total,
               color: "#CE93D8"
+            },
+            {
+              title: "Pending",
+              val: tempResult.Renewal.Pending,
+              color: "#CE93D8",
+              parentID: "Renewal"
+            },
+            {
+              title: "Approved",
+              val: tempResult.Renewal.Approoved,
+              color: "#CE93D8",
+              parentID: "Renewal"
             }
           ]
         },
@@ -91,15 +147,25 @@
           values: [
             {
               title: "New",
-              val: totalNewPass,
-              parentID: "",
+              val: tempResult.New.Total,
               color: "#80CBC4"
+            },
+            {
+              title: "Pending",
+              val: tempResult.New.Pending,
+              color: "#80CBC4",
+              parentID: "New"
+            },
+            {
+              title: "Approved",
+              val: tempResult.New.Approved,
+              color: "#80CBC4",
+              parentID: "New"
             }
           ]
         }
       ];
-      // $scope.dataSource = filterData("");
-      $scope.dataSource = $scope.data;
+      $scope.dataSource = filterData(null);
       generateChart();
     }
     /**
@@ -109,15 +175,22 @@
      * @returns 
      */
     function filterData(name) {
-      var result = [{
-        // key: 'Drill-down data',
-        values: []
-      }];
-      var data = $scope.data[0].values;
-      var values = data.filter(function (item) {
-        return item.parentID === name;
-      });
-      result[0].values = values;
+      var result = null;
+      var tempData = _.cloneDeep($scope.data);
+      if (name) {
+        result = tempData.filter(function (item) {
+          return item.key === name;
+        });
+      } else {
+        var tempValues = [];
+        result = _.map(tempData, function (obj) {
+          tempValues = _.filter(obj.values, function (value) {
+            return !_.has(value, 'parentID');
+          });
+          obj.values = tempValues;
+          return obj;
+        })
+      }
       return result;
     }
     /**
@@ -129,7 +202,7 @@
         chart: {
           type: 'discreteBarChart',
           height: 400,
-          width: 600,
+          width: 580,
           margin: {
             top: 50,
             right: 20,
@@ -184,10 +257,16 @@
         setTimeout(function () {
           $scope.$apply(function () {
             $scope.isFirstLevel = true;
-            $scope.dataSource = filterData("");
+            $scope.dataSource = filterData(null);
           });
         }, 500);
       }
+    }
+
+
+
+    $scope.saveToImage = function () {
+      saveSvgAsPng($("#total_gatepass").find('svg')[0], "gatePassChart.png", { backgroundColor: '#fff' });
     }
 
     activate();

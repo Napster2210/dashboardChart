@@ -14,19 +14,28 @@
     <div class="chart-container">
       <div aria-label="Drilldown-Chart" layout="column" layout-align="center center">
         <md-toolbar style="background-color: #1976d2">
-          <div class="md-toolbar-tools">
-            <md-button class="md-icon-button" aria-label="Bar_Chart">
+          <div class="md-toolbar-tools" style="justify-content: space-between">
+            <md-button class="md-icon-button" aria-label="Bar_Chart" ng-if="isFirstLevel">
               <i class="material-icons">
                 bar_chart
               </i>
             </md-button>
+            <md-button class="md-icon-button" aria-label="Back" ng-if="!isFirstLevel" ng-click="backHandler()">
+              <i class="material-icons">
+                arrow_back
+              </i>
+            </md-button>
             <h2>Total Gate Passes Statistic</h2>
+            <md-button class="md-icon-button" aria-label="Download Image" ng-click="saveToImage()">
+              <i class="material-icons">
+                save_alt
+              </i>
+            </md-button>
           </div>
         </md-toolbar>
 
         <div class="panel-content">
-          <md-button ng-if="!isFirstLevel" ng-click="backHandler()">Back</md-button>
-          <div layout="row">
+          <div layout="row" id="total_gatepass">
             <nvd3 options="options" data="dataSource" api="api"></nvd3>
           </div>
         </div>
