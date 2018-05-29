@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html ng-app="dashboardApp">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="./styles/nv.d3.min.css" />
+  <link rel="stylesheet" href="./styles/angular-material.min.css">
+  <link rel="stylesheet" href="./styles/style.css">
+</head>
+
+<body ng-cloak>
+
+  <div ng-view style="height: 100%"></div>
+
+  <script src="./scripts/jquery.min.js"></script>
+  <script src="./scripts/lodash.min.js"></script>
+  <script src="./scripts/bootstrap.min.js"></script>
+  <script src="./scripts/d3.min.js"></script>
+  <script src="./scripts/nv.d3.min.js"></script>
+
+  <script src="./scripts/angular.min.js"></script>
+  <script src="./scripts/angular-animate.min.js"></script>
+  <script src="./scripts/angular-aria.min.js"></script>
+  <script src="./scripts/angular-messages.min.js"></script>
+  <script src="./scripts/angular-route.min.js"></script>
+  <script src="./scripts/angular-nvd3.min.js"></script>
+  <script src="./scripts/angular-material.min.js"></script>
+
+  <script src="app/app.module.js"></script>
+  <script src="app/app.routes.js"></script>
+  <script src="app/components/dashboard/dashboard.controller.js"></script>
+  <script src="app/components/dashboard/dashbaord.service.js"></script>
+</body>
+
+</html>

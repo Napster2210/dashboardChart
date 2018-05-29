@@ -1,0 +1,37 @@
+<div style="height: 100%">
+  <md-content style="height: 100%">
+    <md-toolbar class="md-hue-2" style="background-color: #004ba0;">
+      <div class="md-toolbar-tools">
+        <md-button class="md-icon-button" aria-label="Dashbaord">
+          <i class="material-icons">
+            dashboard
+          </i>
+        </md-button>
+        <h2 flex md-truncate>Dashboard</h2>
+      </div>
+    </md-toolbar>
+    <br>
+    <div class="chart-container">
+      <div aria-label="Drilldown-Chart" layout="column" layout-align="center center">
+        <md-toolbar style="background-color: #1976d2">
+          <div class="md-toolbar-tools">
+            <md-button class="md-icon-button" aria-label="Bar_Chart">
+              <i class="material-icons">
+                bar_chart
+              </i>
+            </md-button>
+            <h2>Total Gate Passes Statistic</h2>
+          </div>
+        </md-toolbar>
+
+        <div class="panel-content">
+          <md-button ng-if="!isFirstLevel" ng-click="backHandler()">Back</md-button>
+          <div layout="row">
+            <nvd3 options="options" data="dataSource" api="api"></nvd3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </md-content>
+</div>
